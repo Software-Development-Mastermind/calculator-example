@@ -1,0 +1,96 @@
+#buttons {
+    display: flex;
+    flex-wrap: wrap;
+    width: 18rem;
+}
+
+.button {
+    width: 5rem;
+    height: 5rem;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    background-color: black;
+}
+
+.button > button {
+    background-color: #222;
+    color: #eee;
+    border-style: none;
+}
+
+button {
+    width: 5rem;
+    height: 5rem;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+#lower-box {
+    display: flex;
+    flex-wrap: wrap;
+    width: 24rem;
+}
+
+.symbol {
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
+.symbol > button {
+    color: #eee;
+    background-color: grey;
+    border-style: none;
+}
+
+#display {
+    display: flex;
+    flex-wrap: wrap;
+    width: 24rem;
+    flex-direction: row;
+}
+
+p {
+    margin-left: auto;
+    margin-right: 1rem;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 3rem;
+}
+
+#calculator {
+    border-style: solid;
+    padding-left: 1rem;
+    padding-top: 1rem;
+    width: 24rem;
+}
+
+#ce {
+    background-color: darkred;
+}
+
+#equals {
+    background-color: rgb(0, 0, 110);
+}
+
+
+
+#operands > div {
+    margin-right: 3px;
+    display: inline;
+}
+
+#memoryMinus {
+    background-color: darkgreen;
+}
+
+#memoryPlus {
+    background-color: darkgreen;
+}
+
+#memoryRecall {
+    background-color: darkgreen;
+}
+
+#memoryClear {
+    background-color: darkgreen;
+}
