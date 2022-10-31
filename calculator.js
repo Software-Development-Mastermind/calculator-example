@@ -1,161 +1,152 @@
-// Number buttons
-document.querySelectorAll('.number').forEach(item => {
-    item.addEventListener('click', displayNumber)
-})
+let firstOperand = null;
+let secondOperand = null;
+let operator = null;
 
-// Decimal button
-document.querySelector('#decimal').addEventListener('click', displayDecimal)
+let memory = null;
+
+// Number buttons
+document.querySelectorAll(".number").forEach((item) => {
+    item.addEventListener("click", numberPress);
+});
 
 // CE button
-document.querySelector('#ce').addEventListener('click', clear)
+document.querySelector("#ce").addEventListener("click", clear);
 
 // Operator buttons
-document.querySelectorAll('.operators').forEach(item => {
-    item.addEventListener('click', operate)
-}) 
+document.querySelectorAll(".operators").forEach((item) => {
+    item.addEventListener("click", operate);
+});
 
 // Equals button
-document.querySelector('#equals').addEventListener('click', calculate)
+document.querySelector("#equals").addEventListener("click", (e) => {
+    const result = calculate(firstOperand, secondOperand, operator);
+    updateDisplay(result);
+    firstOperand = null;
+    secondOperand = null;
+    operator = null;
+});
 
 // Memory buttons
-document.querySelectorAll('.memoryButton').forEach(item => {
-    item.addEventListener('click', memoryAction)
-})
+document.querySelectorAll(".memoryButton").forEach((item) => {
+    item.addEventListener("click", memoryAction);
+});
 
-
-
-
-var redisplay = false;
-
-function displayNumber(e) {
-    
-    let display = document.querySelector('p')
-
+function updateDisplay(value) {
+    let display = document.querySelector("p");
     if (display.innerHTML.length > 10) {
         return;
     }
 
-    if (display.innerHTML == 0 || redisplay === true) {
-        display.innerHTML = e.target.innerHTML;
-        redisplay = false;
-    } else {
-        display.innerHTML = `${display.innerHTML}${e.target.innerHTML}`
-    }
-
+    display.innerHTML = value;
 }
 
+function getDisplayValue() {
+    let display = document.querySelector("p");
+    return display.textContent;
+}
 
-function displayDecimal() {
-    let display = document.querySelector('p')
+function numberPress(e) {
+    const buttonValue = e.target.textContent;
 
-    let decimal = document.querySelector('#decimal')
-    
-
-    for (let i = 0; i < display.innerHTML.length; i++) {
-        if (display.innerHTML[i] === '.') {
-            return;
+    if (operator === null) {
+        if (buttonValue === ".") {
+            if (firstOperand.includes(".")) {
+                return;
+            }
         }
+        firstOperand =
+            firstOperand === null || firstOperand === 0
+                ? buttonValue
+                : firstOperand + buttonValue;
+        updateDisplay(firstOperand);
+    } else {
+        if (buttonValue === ".") {
+            if (secondOperand.includes(".")) {
+                return;
+            }
+        }
+        secondOperand =
+            secondOperand === null || secondOperand === 0
+                ? buttonValue
+                : secondOperand + buttonValue;
+        updateDisplay(secondOperand);
     }
-
-    display.innerHTML = `${display.innerHTML}${decimal.innerHTML}`
 }
-
 
 function clear() {
-    document.querySelector('p').innerHTML = 0;
-    document.querySelector('#firstOperand').innerHTML = ""
-    document.querySelector('#operator').innerHTML = ""
-    document.querySelector('#secondOperand').innerHTML = ""
+    document.querySelector("p").innerHTML = 0;
+    if (operator == null) {
+        firstOperand = 0;
+    } else {
+        secondOperand = 0;
+    }
 }
-
 
 function operate(e) {
-    
-    if (document.querySelector('#firstOperand').innerHTML != "") {
-        calculate();
+    if (operator !== null && firstOperand && secondOperand) {
+        const result = calculate(firstOperand, secondOperand, operator);
+        firstOperand = result;
+        secondOperand = null;
+        updateDisplay(result);
     }
 
-    let display = document.querySelector('p');
-    let firstOperand = display.innerHTML;
-    let operator = e.target.innerHTML;
-    document.querySelector('#firstOperand').innerHTML = firstOperand;
-    document.querySelector('#operator').innerHTML = operator;
-    document.querySelector('#secondOperand').innerHTML = "";
+    if (operator === null && firstOperand == null && secondOperand == null) {
+        let display = document.querySelector("p");
+        firstOperand = display.textContent;
+    }
 
-    redisplay = true;
-
+    operator = e.target.textContent;
 }
 
-function calculate() {
-
-    let display = document.querySelector('p');
-
-    if (document.querySelector('#firstOperand').innerHTML == "") {
-        return;
+function calculate(firstOperand, secondOperand, operator) {
+    if (operator === "+") {
+        const result = Number(firstOperand) + Number(secondOperand);
+        return parseFloat(result.toFixed(3));
     }
-
-    if (document.querySelector('#secondOperand').innerHTML != "") {
-        var firstOperand = parseFloat(display.innerHTML);
-        document.querySelector('#firstOperand').innerHTML = firstOperand;
-        var secondOperand = parseFloat(document.querySelector('#secondOperand').innerHTML);
-        var operator = document.querySelector('#operator').innerHTML;
-    } else {
-        var firstOperand = parseFloat(document.querySelector('#firstOperand').innerHTML);
-        var secondOperand = parseFloat(display.innerHTML);
-        var operator = document.querySelector('#operator').innerHTML;
-        document.querySelector('#secondOperand').innerHTML = secondOperand;
+    if (operator === "÷") {
+        const result = Number(firstOperand) / Number(secondOperand);
+        return parseFloat(result.toFixed(3));
     }
-
-    let result = (operator == "+" ) ? firstOperand + secondOperand :
-    (operator == "-") ? firstOperand - secondOperand :
-    (operator == "x") ? firstOperand * secondOperand :
-    firstOperand / secondOperand;
-
-    
-    display.innerHTML = result;
-    
-    redisplay = true;
-
+    if (operator === "x") {
+        const result = Number(firstOperand) * Number(secondOperand);
+        return parseFloat(result.toFixed(3));
+    }
+    if (operator === "-") {
+        const result = Number(firstOperand) - Number(secondOperand);
+        return parseFloat(result.toFixed(3));
+    }
 }
 
 function memoryAction(e) {
-    return (e.target.innerHTML == "M+") ? memoryPlus() :
-    (e.target.innerHTML == "M-") ? memoryMinus() :
-    (e.target.innerHTML == "MR") ? memoryRecall() :
-    memoryClear();
+    return e.target.innerHTML == "M+"
+        ? memoryPlus()
+        : e.target.innerHTML == "M-"
+        ? memoryMinus()
+        : e.target.innerHTML == "MR"
+        ? memoryRecall()
+        : memoryClear();
 }
 
 function memoryPlus() {
-
-    let memory = document.querySelector('#memory').innerHTML;
-
-    let newMemory = (memory == "No Memory") ? document.querySelector('p').innerHTML :
-    parseFloat(memory) + parseFloat(document.querySelector('p').innerHTML);
-
-    document.querySelector('#memory').innerHTML = newMemory;
-
+    memory = getDisplayValue();
+    document.querySelector("#memory").innerHTML = memory;
 }
 
 function memoryMinus() {
-
-    let memory = document.querySelector('#memory').innerHTML;
-
-    let newMemory = (memory == "No Memory") ? 0 - parseFloat(document.querySelector('p').innerHTML) :
-    parseFloat(memory) - parseFloat(document.querySelector('p').innerHTML);
-
-    document.querySelector('#memory').innerHTML = newMemory;
+    // TBD
 }
 
 function memoryRecall() {
-    
-    let memory = document.querySelector('#memory').innerHTML;
-    if (memory == "No Memory") {
-        return;
+    if (operator == null) {
+        firstOperand = memory;
+        updateDisplay(firstOperand);
     } else {
-        document.querySelector('p').innerHTML = memory;
+        secondOperand = memory;
+        updateDisplay(secondOperand);
     }
 }
 
 function memoryClear() {
-    document.querySelector('#memory').innerHTML = "No Memory";
+    memory = null;
+    document.querySelector("#memory").innerHTML = "No Memory";
 }
